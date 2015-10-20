@@ -197,21 +197,25 @@ def SetBold(value):
 	""" Sets the font bold or not, depending whether value is 1 or 0. Not all terminals support this. """
 	global __PYCRT_BOLD
 	__PYCRT_BOLD = value
+	__UpdateFormat()
 	
 def SetItalic(value):
 	""" Sets the font italic or not, depending whether value is 1 or 0. Not all terminals support this. """
 	global __PYCRT_ITALIC
 	__PYCRT_ITALIC = value
+	__UpdateFormat()
 	
 def SetUnderline(value):
 	""" Sets the font underlined or not, depending whether value is 1 or 0. Not all terminals support this. """
 	global __PYCRT_UNDERLINE
 	__PYCRT_UNDERLINE = value
+	__UpdateFormat()
 	
 def SetStrike(value):
 	""" Sets the font strikethrough or not, depending whether value is 1 or 0. Not all terminals support this. """
 	global __PYCRT_STRIKETHROUGH
 	__PYCRT_STRIKETHROUGH = value
+	__UpdateFormat()
 
 def FormatReset():
 	""" Resets all format, and recovers default terminal colors. """
