@@ -49,8 +49,8 @@ class Color(Enum):
 
 # Variable declaration section
 # Storage for SGR parameters
-__PYCRT_TEXTCOLOR = -1									# default console text color
-__PYCRT_TEXTBACKGROUND = -1								# default console text __PYCRT_TEXTBACKGROUND
+__PYCRT_TEXTCOLOR = Color.DEFAULT									# default console text color
+__PYCRT_TEXTBACKGROUND = Color.DEFAULT								# default console text __PYCRT_TEXTBACKGROUND
 __PYCRT_BOLD = 0
 __PYCRT_ITALIC = 0
 __PYCRT_UNDERLINE = 0						
@@ -102,11 +102,13 @@ def WhereXY():
 	
 def HideCursor():
 	""" Hides console cursor. """
+	global __PYCRT_CURSOR_STATUS
 	sys.stdout.write("\033[?25l");
 	__PYCRT_CURSOR_STATUS = 0
 	
 def ShowCursor():
 	"""	Shows console cursor. """
+	global __PYCRT_CURSOR_STATUS
 	sys.stdout.write("\033[?25h");
 	__PYCRT_CURSOR_STATUS = 1
 	
@@ -129,6 +131,10 @@ def ClrEOL():
 
 def RawOn():
 	""" Enters RAW terminal mode. Necessary for PendKey and ReadKey functions to work. """
+	global __PYCRT_RAW_FD
+	global __PYCRT_RAW_CNF
+	global __PYCRT_RAW_MODE
+	global __PYCRT_RAW_MODE
 	if (__PYCRT_RAW_MODE == 1):
 		return 						# Terminal is already in RAW mode.
 	__PYCRT_RAW_FD = sys.stdin.fileno() 					# it should still remain the same. Grab it anyways.
@@ -152,11 +158,11 @@ def __SetFormat(textbackground,textcolor,formatflags):
 	""" Internal. Sets text background, color and ANSI-formatted SGR format flags """
 	bgrstr = (str(textbackground),"")[textbackground==-1]				# well that's a tricky Python implementation of the ?: operator. If textbackground==1, it will return second item of array.
 	clstr = (str(textcolor),"")[textcolor==-1]							# both lines are meant to return an empty string if value is -1, therefore, leaving the value to console defaults.
-	sys.stdout.write("\033[%d;%d;%s" % (bgrstr,clstr,formatflags))
+	sys.stdout.write("\033[%s;%s%s" % (bgrstr,clstr,str(formatflags) + "m"))
 	
 def __GetFormatFlags():
 	""" Internal. Gets the format flags that will be sent as ANSI-formatted SGR flags. Not all terminals support these flags. """
-	flags = ""
+	flags = ";"
 	if (__PYCRT_BOLD == 1):
 		flags += "1;"
 	if (__PYCRT_ITALIC == 1):
@@ -165,37 +171,46 @@ def __GetFormatFlags():
 		flags += "4;"
 	if (__PYCRT_STRIKETHROUGH == 1):
 		flags += "9;"	
+	if (flags == ";"):
+		flags = ""
+	return flags
 		
 def __UpdateFormat():
 	""" Internal. Set format with current variable values. """
-	__SetFormat(__PYCRT_TEXTBACKGROUND,__PYCRT_TEXTCOLOR,__GetFormatFlags())
+	bgcl = (__PYCRT_TEXTBACKGROUND.value+40,-1)[__PYCRT_TEXTBACKGROUND.value==-1]
+	fgcl = (__PYCRT_TEXTCOLOR.value+30,-1)[__PYCRT_TEXTCOLOR.value==-1]
+	__SetFormat(bgcl,fgcl,__GetFormatFlags())
 	
 def TextBackground(textbackground):
-	""" Changes the text background in the console. Throws assertion error if the color is invalid. """
-	assert textbackground >= -1 and textbackground <= 7
+	""" Changes the text background in the console. """
+	global __PYCRT_TEXTBACKGROUND
 	__PYCRT_TEXTBACKGROUND = textbackground
 	__UpdateFormat()
 	
 def TextColor(textcolor):
-	""" Changes the text color in the console. Throws assertion error if the color is invalid. """
-	assert textcolor >= -1 and textcolor <= 7
+	""" Changes the text color in the console. """
+	global __PYCRT_TEXTCOLOR
 	__PYCRT_TEXTCOLOR = textcolor
 	__UpdateFormat()
 	
 def SetBold(value):
 	""" Sets the font bold or not, depending whether value is 1 or 0. Not all terminals support this. """
+	global __PYCRT_BOLD
 	__PYCRT_BOLD = value
 	
 def SetItalic(value):
 	""" Sets the font italic or not, depending whether value is 1 or 0. Not all terminals support this. """
+	global __PYCRT_ITALIC
 	__PYCRT_ITALIC = value
 	
 def SetUnderline(value):
 	""" Sets the font underlined or not, depending whether value is 1 or 0. Not all terminals support this. """
+	global __PYCRT_UNDERLINE
 	__PYCRT_UNDERLINE = value
 	
 def SetStrike(value):
 	""" Sets the font strikethrough or not, depending whether value is 1 or 0. Not all terminals support this. """
+	global __PYCRT_STRIKETHROUGH
 	__PYCRT_STRIKETHROUGH = value
 
 def FormatReset():
