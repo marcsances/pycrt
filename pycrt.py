@@ -110,7 +110,7 @@ def ShowCursor():
 	sys.stdout.write("\033[?25h");
 	__PYCRT_CURSOR_STATUS = 1
 	
-def CursorStatus()
+def CursorStatus():
 	""" Returns 1 if the cursor is visible, 0 otherwise. """
 	return __PYCRT_CURSOR_STATUS
 	
@@ -129,7 +129,8 @@ def ClrEOL():
 
 def RawOn():
 	""" Enters RAW terminal mode. Necessary for PendKey and ReadKey functions to work. """
-	if (__PYCRT_RAW_MODE = 1) return						# Terminal is already in RAW mode. Proceeding would not only be useless, but would store a RAW configuration, making it impossible to recover the old configuration.
+	if (__PYCRT_RAW_MODE == 1):
+		return 						# Terminal is already in RAW mode.
 	__PYCRT_RAW_FD = sys.stdin.fileno() 					# it should still remain the same. Grab it anyways.
 	__PYCRT_RAW_CNF = termios.tcgetattr(__PYCRT_RAW_FD)	# get current terminal configuration and store it until raw mode is left.
 	tty.setraw(__PYCRT_RAW_FD)								# enable RAW mode
@@ -137,7 +138,8 @@ def RawOn():
 	
 def RawOff():
 	""" Leaves RAW terminal mode, restoring back the previous terminal status. """
-	if (__PYCRT_RAW_MODE = 0) return
+	if (__PYCRT_RAW_MODE == 0):
+		return
 	termios.tcsetattr(__PYCRT_RAW_FD,termios.TCSADRAIN,__PYCRT_RAW_CNF)
 	
 def IsRaw():
@@ -210,7 +212,8 @@ def PendKey():
 	Boolean. Returns true if there is a key in the keyboard buffer ready to be read.
 	Throws RawModeOffException if terminal was not set to RAW mode.
 	"""
-	if (__PYCRT_RAW_MODE==0) raise RawModeOffException()
+	if (__PYCRT_RAW_MODE==0):
+		raise RawModeOffException()
 	raise NotImplementedError()												# Not as easy as it seems.
 	
 def ReadKey():
@@ -218,5 +221,6 @@ def ReadKey():
 	Char. Returns the next key value in the keyboard buffer.
 	Throws RawModeOffException if terminal was not set to RAW mode.
 	"""
-	if (__PYCRT_RAW_MODE==0) raise RawModeOffException()
-	raise NotImplementedError()												# For now, let's commit what is done.
+	if (__PYCRT_RAW_MODE==0):
+		 raise RawModeOffException()
+	return sys.stdin.read(1)
