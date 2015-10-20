@@ -49,8 +49,8 @@ class Color(Enum):
 
 # Variable declaration section
 # Storage for SGR parameters
-__PYCRT_TEXTCOLOR = -1						# default console text color
-__PYCRT_TEXTBACKGROUND = -1					# default console text __PYCRT_TEXTBACKGROUND
+__PYCRT_TEXTCOLOR = -1									# default console text color
+__PYCRT_TEXTBACKGROUND = -1								# default console text __PYCRT_TEXTBACKGROUND
 __PYCRT_BOLD = 0
 __PYCRT_ITALIC = 0
 __PYCRT_UNDERLINE = 0						
@@ -71,7 +71,7 @@ def GotoXY(x,y):
 def __WhereRC():
 	""" Internal. Returns a tuple containing the row and column of the cursor. """
 	__unraw = 0
-	if (__PYCRT_RAW_MODE == 0):
+	if (__PYCRT_RAW_MODE == 0):					# terminal mode not RAW currently, temporarily enter RAW mode
 		__fd = sys.stdin.fileno()
 		__tcnf = termios.tcgetattr(__fd)
 		__unraw = 1
@@ -120,3 +120,103 @@ def ClrScr():
 	""" Clears the terminal screen. """
 	sys.stdout.write("\033[2J");
 	sys.stdout.write("\033[1;1H");							# move cursor to 0,0. Should be done by default by terminal.
+	
+def ClrEOL():
+	""" Clears from cursor position to end of line. """
+	sys.stdout.write("\033[0K");
+	
+# Terminal status manipulation functions
+
+def RawOn():
+	""" Enters RAW terminal mode. Necessary for PendKey and ReadKey functions to work. """
+	if (__PYCRT_RAW_MODE = 1) return						# Terminal is already in RAW mode. Proceeding would not only be useless, but would store a RAW configuration, making it impossible to recover the old configuration.
+	__PYCRT_RAW_FD = sys.stdin.fileno() 					# it should still remain the same. Grab it anyways.
+	__PYCRT_RAW_CNF = termios.tcgetattr(__PYCRT_RAW_FD)	# get current terminal configuration and store it until raw mode is left.
+	tty.setraw(__PYCRT_RAW_FD)								# enable RAW mode
+	__PYCRT_RAW_MODE = 1									# set RAW flag
+	
+def RawOff():
+	""" Leaves RAW terminal mode, restoring back the previous terminal status. """
+	if (__PYCRT_RAW_MODE = 0) return
+	termios.tcsetattr(__PYCRT_RAW_FD,termios.TCSADRAIN,__PYCRT_RAW_CNF)
+	
+def IsRaw():
+	""" Checks whether RAW mode is on or not. """
+	return (__PYCRT_RAW_MODE == 1)
+	
+# Color and format manipulation functions
+
+def __SetFormat(textbackground,textcolor,formatflags):
+	""" Internal. Sets text background, color and ANSI-formatted SGR format flags """
+	bgrstr = (str(textbackground),"")[textbackground==-1]				# well that's a tricky Python implementation of the ?: operator. If textbackground==1, it will return second item of array.
+	clstr = (str(textcolor),"")[textcolor==-1]							# both lines are meant to return an empty string if value is -1, therefore, leaving the value to console defaults.
+	sys.stdout.write("\033[%d;%d;%s" % (bgrstr,clstr,formatflags))
+	
+def __GetFormatFlags():
+	""" Internal. Gets the format flags that will be sent as ANSI-formatted SGR flags. Not all terminals support these flags. """
+	flags = ""
+	if (__PYCRT_BOLD == 1):
+		flags += "1;"
+	if (__PYCRT_ITALIC == 1):
+		flags += "3;"
+	if (__PYCRT_UNDERLINE == 1):
+		flags += "4;"
+	if (__PYCRT_STRIKETHROUGH == 1):
+		flags += "9;"	
+		
+def __UpdateFormat():
+	""" Internal. Set format with current variable values. """
+	__SetFormat(__PYCRT_TEXTBACKGROUND,__PYCRT_TEXTCOLOR,__GetFormatFlags())
+	
+def TextBackground(textbackground):
+	""" Changes the text background in the console. Throws assertion error if the color is invalid. """
+	assert textbackground >= -1 and textbackground <= 7
+	__PYCRT_TEXTBACKGROUND = textbackground
+	__UpdateFormat()
+	
+def TextColor(textcolor):
+	""" Changes the text color in the console. Throws assertion error if the color is invalid. """
+	assert textcolor >= -1 and textcolor <= 7
+	__PYCRT_TEXTCOLOR = textcolor
+	__UpdateFormat()
+	
+def SetBold(value):
+	""" Sets the font bold or not, depending whether value is 1 or 0. Not all terminals support this. """
+	__PYCRT_BOLD = value
+	
+def SetItalic(value):
+	""" Sets the font italic or not, depending whether value is 1 or 0. Not all terminals support this. """
+	__PYCRT_ITALIC = value
+	
+def SetUnderline(value):
+	""" Sets the font underlined or not, depending whether value is 1 or 0. Not all terminals support this. """
+	__PYCRT_UNDERLINE = value
+	
+def SetStrike(value):
+	""" Sets the font strikethrough or not, depending whether value is 1 or 0. Not all terminals support this. """
+	__PYCRT_STRIKETHROUGH = value
+
+def FormatReset():
+	""" Resets all format, and recovers default terminal colors. """
+	sys.stdout.write("\033[0m")
+	
+# Keyboard manipulation functions
+
+class RawModeOffException(Exception):
+	pass
+
+def PendKey():
+	"""
+	Boolean. Returns true if there is a key in the keyboard buffer ready to be read.
+	Throws RawModeOffException if terminal was not set to RAW mode.
+	"""
+	if (__PYCRT_RAW_MODE==0) raise RawModeOffException()
+	raise NotImplementedError()												# Not as easy as it seems.
+	
+def ReadKey():
+	"""
+	Char. Returns the next key value in the keyboard buffer.
+	Throws RawModeOffException if terminal was not set to RAW mode.
+	"""
+	if (__PYCRT_RAW_MODE==0) raise RawModeOffException()
+	raise NotImplementedError()												# For now, let's commit what is done.
