@@ -170,6 +170,8 @@ def __GetFormatFlags():
 		flags = flags + "3;"
 	if (__PYCRT_UNDERLINE==1):
 		flags = flags + "4;"
+	if (__PYCRT_CONCEAL==1):
+		flags = flags + "8;"
 	if (__PYCRT_STRIKETHROUGH==1):
 		flags = flags + "9;"	
 	return flags[:-1]
@@ -209,6 +211,12 @@ def SetUnderline(value):
 	global __PYCRT_UNDERLINE
 	__PYCRT_UNDERLINE = value
 	__UpdateFormat()
+	
+def SetConceal(value):
+	""" Sets the font concealed or not, depending whether value is 1 or 0. Not all terminals support this. """
+	global __PYCRT_CONCEAL
+	__PYCRT_CONCEAL = value
+	__UpdateFormat()	
 	
 def SetStrike(value):
 	""" Sets the font strikethrough or not, depending whether value is 1 or 0. Not all terminals support this. """
