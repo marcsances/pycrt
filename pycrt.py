@@ -33,6 +33,7 @@
 # Import section
 import sys, os, termios, fcntl, tty
 from enum import Enum
+from select import select
 
 # Global enum declarations
 class Color(Enum):
@@ -233,7 +234,8 @@ def PendKey():
 	"""
 	if (__PYCRT_RAW_MODE==0):
 		raise RawModeOffException()
-	raise NotImplementedError()												# Not as easy as it seems.
+	ret = select([sys.stdin],[],[],0.001)
+	return len(ret[0])>0
 	
 def ReadKey():
 	"""
