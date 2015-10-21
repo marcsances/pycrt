@@ -164,17 +164,15 @@ def __SetFormat(textbackground,textcolor,formatflags):
 def __GetFormatFlags():
 	""" Internal. Gets the format flags that will be sent as ANSI-formatted SGR flags. Not all terminals support these flags. """
 	flags = ";"
-	if (__PYCRT_BOLD == 1):
-		flags += "1;"
-	if (__PYCRT_ITALIC == 1):
-		flags += "3;"
-	if (__PYCRT_UNDERLINE == 1):
-		flags += "4;"
-	if (__PYCRT_STRIKETHROUGH == 1):
-		flags += "9;"	
-	if (flags == ";"):
-		flags = ""
-	return flags
+	if (__PYCRT_BOLD==1):
+		flags = flags + "1;"
+	if (__PYCRT_ITALIC==1):
+		flags = flags + "3;"
+	if (__PYCRT_UNDERLINE==1):
+		flags = flags + "4;"
+	if (__PYCRT_STRIKETHROUGH==1):
+		flags = flags + "9;"	
+	return flags[:-1]
 		
 def __UpdateFormat():
 	""" Internal. Set format with current variable values. """
