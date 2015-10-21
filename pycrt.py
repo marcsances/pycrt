@@ -31,9 +31,15 @@
 
 # Main CRT module (pycrt.py)
 # Import section
-import sys, os, termios, fcntl, tty
-from enum import Enum
+import sys
+import os
+import termios
+import fcntl
+import tty
+import time
 from select import select
+from enum import Enum
+
 
 # Global enum declarations
 class Color(Enum):
@@ -251,3 +257,13 @@ def ReadKey():
 	if (__PYCRT_RAW_MODE==0):
 		 raise RawModeOffException()
 	return sys.stdin.read(1)
+	
+# Misc functions
+
+def OFlush():
+	""" Flushes stdout. Necessary in some real-time applications to avoid graphic lag. """
+	sys.stdout.flush()
+	
+def delay(ms):
+	""" Shortcut to time.sleep. Works with milliseconds. """
+	time.sleep(ms / 1000)
