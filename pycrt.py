@@ -71,7 +71,7 @@ def GotoXY(x,y):
 def __WhereRC():
 	""" Internal. Returns a tuple containing the row and column of the cursor. """
 	__unraw = 0
-	if (__PYCRT_RAW_MODE == 0):					# terminal mode not RAW currently, temporarily enter RAW mode
+	if (__PYCRT_RAW_MODE==0):
 		__fd = sys.stdin.fileno()
 		__tcnf = termios.tcgetattr(__fd)
 		__unraw = 1
@@ -84,7 +84,7 @@ def __WhereRC():
 			output = output + char
 			char = sys.stdin.read(1)
 	finally:
-		if (__unraw == 1):				# terminal status was not RAW before invoke. restore terminal status
+		if (__unraw==1):
 			termios.tcsetattr(__fd,termios.TCSADRAIN,__tcnf)
 	return tuple([int(i) for i in output[2:].split(';')])
 	
