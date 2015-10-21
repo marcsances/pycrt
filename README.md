@@ -45,12 +45,12 @@ At the moment, the following functions are implemented:
   * If value is 1, the following text output to stdout will be underline. Does not affect previous output. If value is 0, underline is disabled. Not all terminals support this format (those which don't, will simply ignore it).
 * SetStrike(int value)
   * If value is 1, the following text output to stdout will be striked out. Does not affect previous output. If value is 0, strike is disabled. Not all terminals support this format (those which don't, will simply ignore it).
+* SetConceal(int value)
+  * If value is 1, the following text output to stdout will be concealed. Does not affect previous output. If value is 0, concealing is disabled. Not all terminals support this format (those which don't, will simply ignore it). 
 * FormatReset()
   * Resets colors and format to terminal defaults.
 * ReadKey()
   * Reads the next key in buffer and outputs is value as char. RAW mode should be enabled before. Throws pycrt.RawModeOffException if RAW Mode is off.
-  
-The following functions will be implemented soon:
 * PendKey()
   * Returns true if there's a key in the buffer ready to be read. RAW mode should be enabled before. Throws pycrt.RawModeOffException if RAW Mode is off.
   
