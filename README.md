@@ -1,61 +1,63 @@
 # pycrt
 The Python Console Resource Toolkit library.
 
+**This branch contains the Python 3 version. For the old Python 2 version visit the ``python2`` branch.**
+
 ## What's this?
 PyCrt is a open-source Python module aimed to provide TUI-oriented console functions at its most basic level, that is, setting colors, moving cursor, clearing screen, and reading synchronously terminal input.
 It's inspired on the classic Pascal unit "crt.pas", hence the backronym. It shares some function names and syntax from it as well.
 At the moment, it's only available for POSIX systems providing ANSI escape sequences and termios/unistd libraries.
-Therefore, it works on OSX/Linux/UNIX, but not on Win32.
+Therefore, it works on OSX/Linux/UNIX, as well as Windows Terminal and enhanced Windows 10 console host (not the legacy console).
 
 ## Which features does it provide?
 At the moment, the following functions are implemented:
-* GotoXY(int x,int y)
+* goto_xy(int x,int y)
   * Makes the terminal cursor jump to the given coordinates on screen. X is the column and Y is the row.
-* int WhereX()
+* int where_x()
   * Returns the column where the cursor is.
-* int WhereY()
+* int where_y()
   * Returns the row where the cursor is.
-* (int,int) WhereXY()
+* (int,int) where_xy()
   * Returns a tuple containing both X and Y coordinates of cursor.
-* HideCursor()
+* hide_cursor()
   * Hides cursor.
-* ShowCursor()
+* show_cursor()
   * Shows cursor.
-* CursorStatus()
+* cursor_status()
   * Returns 1 if the cursor is visible, 0 otherwise.
-* ClrScr()
+* clrscr()
   * Clears console screen.
-* ClrEOL()
+* clreol()
   * Clears the current line from cursor position onwards.
-* RawOn()
+* raw_on()
   * Enables raw terminal mode (prevents OS from handling buffers). Necessary for PendKey() and ReadKey(). Developers are adviced to call RawOff() before exiting program.
-* RawOff()
+* raw_off()
   * Diables raw terminal mode and restores old status.
-* IsRaw()
+* is_raw()
   * Returns true if raw mode is enabled.
-* TextBackground(pycrt.Color color)
+* text_background(pycrt.Color color)
   * Sets the background of the text that will follow stdout from now on. Does not affect previous output. Argument must be of class Color (see below).
-* TextColor(pycrt.Color color)
+* text_color(pycrt.Color color)
   * Sets the foreground of the text that will follow stdout from now on. Does not affect previous output. Argument must be of class Color (see below).
-* SetBold(int value)
+* set_bold(int value)
   * If value is 1, the following text output to stdout will be bold. Does not affect previous output. If value is 0, bold is disabled. Not all terminals support this format (those which don't, will simply ignore it).
-* SetItalic(int value)
+* set_italic(int value)
   * If value is 1, the following text output to stdout will be italic. Does not affect previous output. If value is 0, italic is disabled. Not all terminals support this format (those which don't, will simply ignore it).
-* SetUnderline(int value)
+* set_underline(int value)
   * If value is 1, the following text output to stdout will be underline. Does not affect previous output. If value is 0, underline is disabled. Not all terminals support this format (those which don't, will simply ignore it).
-* SetStrike(int value)
+* set_strike(int value)
   * If value is 1, the following text output to stdout will be striked out. Does not affect previous output. If value is 0, strike is disabled. Not all terminals support this format (those which don't, will simply ignore it).
-* SetConceal(int value)
+* set_conceal(int value)
   * If value is 1, the following text output to stdout will be concealed. Does not affect previous output. If value is 0, concealing is disabled. Not all terminals support this format (those which don't, will simply ignore it). 
-* FormatReset()
+* format_reset()
   * Resets colors and format to terminal defaults.
-* ReadKey()
+* read_key()
   * Reads the next key in buffer and outputs is value as char. RAW mode should be enabled before. Throws pycrt.RawModeOffException if RAW Mode is off.
-* PendKey()
+* pend_key()
   * Returns true if there's a key in the buffer ready to be read. RAW mode should be enabled before. Throws pycrt.RawModeOffException if RAW Mode is off.
   
 The following classes are available:
-* class Color(Enum)
+* class Color(IntEnum)
   * Enumeration of the available colors for TextColor and TextBackground, which are: DEFAULT (default terminal settings), BLACK,	RED, GREEN,	BROWN, BLUE, MAGENTA, CYAN and WHITE.
 * class RawModeOffException(Exception)
   * Exception threwn if an operation requiring RAW mode to be enabled is called with this mode disabled.
@@ -64,7 +66,7 @@ The following classes are available:
 This software is available as open-source software under the BSD license which follows:
 ```
  Python Console Resource Toolkit
- Copyright (c) 2015, Marc Sances
+ Copyright (c) 2022, Marc Sances
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
